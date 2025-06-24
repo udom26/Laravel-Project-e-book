@@ -49,6 +49,28 @@
                 <a href="{{ url('/') }}" class="nav-link active">Home</a>
             </li>
         </ul>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle"></i> เมนู
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ url('/') }}">
+                            <i class="fas fa-home"></i> ดูฟังก์ชันของผู้ใช้
+                        </a>
+                    </li>
+                    <li>
+                         <form action="{{ route('auth.logout') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i>ออกจากระบบ
+                                        </button>
+                                    </form>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </nav>
     <!-- Sidebar -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -59,39 +81,33 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <li class="nav-item">
-                        <a href="" class="nav-link{{ request()->routeIs('admin.dashboard') ? ' active' : '' }}">
+                        <a href="{{ route('dashboard') }}" class="nav-link{{ request()->routeIs('dashboard') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>แดชบอร์ด</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link{{ request()->routeIs('admin.categories') ? ' active' : '' }}">
+                        <a href="{{ route('category.index') }}" class="nav-link{{ request()->routeIs('category') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-tags"></i>
                             <p>หมวดหมู่หนังสือ</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="}" class="nav-link{{ request()->routeIs('admin.books') ? ' active' : '' }}">
+                        <a href="{{ route('book') }}" class="nav-link{{ request()->routeIs('book') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-book"></i>
                             <p>จัดการหนังสือ</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link{{ request()->routeIs('admin.users') ? ' active' : '' }}">
+                        <a href="{{ route('user') }}" class="nav-link{{ request()->routeIs('user') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-users"></i>
                             <p>จัดการผู้ใช้</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link{{ request()->routeIs('admin.transactions') ? ' active' : '' }}">
+                        <a href="{{ route('transaction') }}" class="nav-link{{ request()->routeIs('transaction') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-exchange-alt"></i>
                             <p>ประวัติการยืม-คืน</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link{{ request()->routeIs('admin.reports') ? ' active' : '' }}">
-                            <i class="nav-icon fas fa-chart-bar"></i>
-                            <p>รายงาน</p>
                         </a>
                     </li>
                 </ul>

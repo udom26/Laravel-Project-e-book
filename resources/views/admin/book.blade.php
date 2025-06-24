@@ -1,0 +1,125 @@
+@extends('admin.layout-admin')
+
+@section('title', 'จัดการหนังสือ')
+
+@section('content')
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>จัดการหนังสือ</h3>
+        <a id="addBookBtn" href="{{ route('book.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> เพิ่มหนังสือ
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <!-- ปุ่มเลือกหมวดหมู่ -->
+            <div class="d-flex justify-content-center align-items-center py-3 flex-column">
+                <label for="categoryFilter" class="mb-2 fw-bold text-center">เลือกหมวดหมู่:</label>
+                <select id="categoryFilter" name="categories[]" class="form-select w-auto" required>
+                    <option value="" disabled {{ !request('category_id') ? 'selected' : '' }}>เลือกหมวดหมู่</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category['_id'] }}"
+                            {{ request('category_id') == $category['_id'] ? 'selected' : '' }}>
+                            {{ $category['cate_name'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ชื่อหนังสือ</th>
+                        <th>ผู้แต่ง</th>
+                        <th>รายละเอียด</th>
+                        <th>รูปหน้าปก</th>
+                        <th>URL:หนังสือ</th>
+                        <th>หมวดหมู่</th>
+                        <th class="text-end">การจัดการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(!request('category_id'))
+                        <tr>
+                            <td colspan="8" class="text-center text-danger">
+                                กรุณาเลือกหมวดหมู่หนังสือ
+                            </td>
+                        </tr>
+                    @else
+                        @php
+                            $filteredBooks = collect($books)->filter(function($book) {
+                                return isset($book['categories']) && collect($book['categories'])->pluck('_id')->contains(request('category_id'));
+                            });
+                        @endphp
+                        @forelse($filteredBooks as $index => $book)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $book['book_name'] }}</td>
+                            <td>{{ $book['book_author'] }}</td>
+                            <td>{{ $book['book_description'] }}</td>
+                            <td>
+                                @if(!empty($book['book_cover_image_url']))
+                                    <img src="{{ $book['book_cover_image_url'] }}" alt="cover" width="50">
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if(!empty($book['book_reader_url']))
+                                    <a href="{{ $book['book_reader_url'] }}" target="_blank">อ่าน</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if(isset($book['categories']) && is_array($book['categories']))
+                                    @foreach($book['categories'] as $cate)
+                                        <span class="badge bg-secondary">{{ $cate['cate_name'] }}</span>
+                                    @endforeach
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ route('book.show', $book['_id']) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> ดู
+                                </a>
+                                <a href="{{ route('book.edit', $book['_id']) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> แก้ไข
+                                </a>
+                                <form action="{{ route('book.destroy', $book['_id']) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('ยืนยันการลบหนังสือนี้?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger" type="submit">
+                                        <i class="fas fa-trash"></i> ลบ
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center">ไม่พบหนังสือในหมวดหมู่นี้</td>
+                        </tr>
+                        @endforelse
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const categoryFilter = document.getElementById('categoryFilter');
+    categoryFilter.addEventListener('change', function () {
+        let cateId = this.value;
+        let url = "{{ route('book') }}";
+        if (cateId) {
+            window.location.href = url + '?category_id=' + cateId;
+        } else {
+            window.location.href = url;
+        }
+    });
+});
+</script>
+@endsection
