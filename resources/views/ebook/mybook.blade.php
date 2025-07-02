@@ -21,6 +21,9 @@ body {
     height: 100%;
     background: #fff;
     box-shadow: 0 4px 24px 0 rgba(161,140,209,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .book-card:hover {
     transform: translateY(-5px) scale(1.03);
@@ -40,6 +43,8 @@ body {
 }
 .book-info {
     padding: 1rem;
+    width: 100%;
+    text-align: center;
 }
 .book-title {
     font-weight: bold;
@@ -104,6 +109,7 @@ body {
     font-family: 'Sarabun', 'Prompt', 'Kanit', sans-serif;
     font-size: 15px;
     font-weight: 500;
+    box-shadow: 0 2px 8px rgba(161,140,209,0.10);
 }
 .search-form .btn:hover {
     background: linear-gradient(90deg, #fbc2eb 0%, #a18cd1 100%);
@@ -126,6 +132,9 @@ body {
 .search-btn-wrapper {
     min-width: 100px;
 }
+.pagination {
+    justify-content: center;
+}
 .pagination .page-link {
     border: none;
     color: #a18cd1;
@@ -133,6 +142,8 @@ body {
     margin: 0 0.2rem;
     transition: all 0.2s;
     font-weight: 600;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(161,140,209,0.08);
 }
 .pagination .page-item.active .page-link {
     background: linear-gradient(90deg, #a18cd1 0%, #fbc2eb 100%);
@@ -150,9 +161,29 @@ body {
     border-radius: 1rem;
     padding: 3rem;
     box-shadow: 0 2px 8px rgba(161,140,209,0.08);
+    text-align: center;
 }
 .empty-state i {
     color: #a18cd1;
+}
+.btn-read {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+.btn-read:hover, .btn-read:focus {
+    background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+    color: #fff;
+    transform: scale(1.05);
 }
 </style>
 @endsection
@@ -167,78 +198,57 @@ body {
                     <h2 class="mb-2">
                         <i class="fas fa-book me-2"></i>หนังสือของฉัน
                     </h2>
-                    <p class="mb-0">จัดการและอ่านหนังสือที่คุณซื้อแล้ว</p>
+                    
                 </div>
             </div>
-            
-            <!-- ฟอร์มค้นหา -->
-            <div class="search-section">
-                <form class="search-form" role="search">
-                    <div class="search-container">
-                        <div class="search-select-wrapper">
-                            <select class="form-select" name="search_type">
-                                <option value="all" {{ request('search_type') == 'all' ? 'selected' : '' }}>หมวดหมู่</option>
-                                <option value="title" {{ request('search_type') == 'title' ? 'selected' : '' }}>ชื่อหนังสือ</option>
-                                <option value="author" {{ request('search_type') == 'author' ? 'selected' : '' }}>ผู้แต่ง</option>
-                                <option value="category" {{ request('search_type') == 'category' ? 'selected' : '' }}>หมวดหมู่</option>
-                            </select>
-                        </div>
-                        <div class="search-input-wrapper">
-                            <input class="form-control" type="search" name="search" placeholder="ค้นหาหนังสือ..." aria-label="Search" value="{{ request('search') }}">
-                        </div>
-                        <div class="search-btn-wrapper">
-                            <button class="btn w-100" type="submit">
-                                <i class="fas fa-search me-1"></i>ค้นหา
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 
     <!-- รายการหนังสือ -->
-    <div class="row">
-        @for($i = 1; $i <= 4; $i++)
-        <div class="col-md-4 col-lg-3 mb-4">
-            <div class="card book-card">
-                <div class="book-cover">
-                    <i class="fas fa-book fa-2x"></i>
-                </div>
-                <div class="book-info">
-                    <h5 class="book-title">หนังสือเล่มที่ {{ $i }}</h5>
-                    <p class="book-author">ผู้เขียน: นักเขียนคนที่ {{ $i }}</p>
-                    <p class="text-muted small mb-2">
-                        <i class="fas fa-tag me-1"></i>
-                        {{ $i <= 2 ? 'นวนิยาย' : ($i <= 4 ? 'การศึกษา' : 'ธุรกิจ') }}
-                    </p>
+    <div class="row justify-content-center">
+        @forelse($borrowedBooks as $item)
+            @php $book = $item['book']; @endphp
+            <div class="col-md-4 col-lg-3 mb-4 d-flex align-items-stretch">
+                <div class="card book-card w-100">
+                    <div class="book-cover">
+                        <img src="{{ $book['book_cover_image_url'] ?? 'https://via.placeholder.com/100x150?text=No+Cover' }}" alt="cover" style="width:100px;height:150px;object-fit:cover;">
+                    </div>
+                    <div class="book-info">
+                        <h5 class="book-title">{{ $book['book_name'] ?? '-' }}</h5>
+                        <p class="book-author">ผู้เขียน: {{ $book['book_author'] ?? '-' }}</p>
+                        <p class="text-muted small mb-2">
+                            <i class="fas fa-tag me-1"></i>
+                            @if(isset($book['categories'][0]['cate_name']))
+                                {{ $book['categories'][0]['cate_name'] }}
+                            @else
+                                -
+                            @endif
+                        </p>
+                        @if(!empty($book['book_reader_url']))
+                            <a href="{{ $book['book_reader_url'] }}" target="_blank" class="btn btn-read w-100">
+                                <i class="fas fa-book-open me-1"></i>อ่านหนังสือ
+                            </a>
+                        @else
+                            <span class="btn btn-read w-100 disabled">ไม่มีลิงก์อ่านหนังสือ</span>
+                        @endif
+                        <div class="small text-muted mt-2">
+                            หมดอายุ: {{ \Carbon\Carbon::parse($item['expiresAt'])->format('d/m/Y H:i') }}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        @endfor
+        @empty
+            <div class="col-12 empty-state">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <div>คุณยังไม่มีหนังสือที่ยืม</div>
+            </div>
+        @endforelse
     </div>
 
     <!-- Pagination -->
+    @if($borrowedBooks->lastPage() > 1)
     <div class="d-flex justify-content-center mt-4">
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">ก่อนหน้า</a>
-                </li>
-                <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">ถัดไป</a>
-                </li>
-            </ul>
-        </nav>
+        {{ $borrowedBooks->links('pagination::bootstrap-4') }}
     </div>
+    @endif
 </div>
 @endsection

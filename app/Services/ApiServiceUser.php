@@ -2,54 +2,44 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
-
 class ApiServiceUser
 {
     protected $baseUrl;
-    protected $token;
+    protected $authService;
 
-    public function __construct()
+    public function __construct(\App\Services\ApiServiceAuth $authService)
     {
         $this->baseUrl = env('NGROK_API_URL');
-        $this->token = session('api_token'); // หรือดึงจาก Auth ตามระบบคุณ
-    }
-    
-    protected function headers()
-    {
-        return [
-            'Authorization' => 'Bearer ' . $this->token,
-            'Accept' => 'application/json',
-        ];
+        $this->authService = $authService;
     }
 
     public function getUsers()
     {
-        return Http::withHeaders($this->headers())
-            ->get($this->baseUrl . 'user/all'); 
+        $url = $this->baseUrl . 'user/all';
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 
     public function getUser($id)
     {
-        return Http::withHeaders($this->headers())
-            ->get($this->baseUrl . "user/{$id}");
+        $url = $this->baseUrl . "user/{$id}";
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 
     public function createUser($data)
     {
-        return Http::withHeaders($this->headers())
-            ->post($this->baseUrl . 'user/create', $data);
+        $url = $this->baseUrl . 'user/create';
+        return $this->authService->apiRequestWithAutoRefresh('POST', $url, ['json' => $data]);
     }
 
     public function updateUser($id, $data)
     {
-        return Http::withHeaders($this->headers())
-            ->patch($this->baseUrl . "user/{$id}", $data);
+        $url = $this->baseUrl . "user/{$id}";
+        return $this->authService->apiRequestWithAutoRefresh('PATCH', $url, ['json' => $data]);
     }
 
     public function deleteUser($id)
     {
-        return Http::withHeaders($this->headers())
-            ->delete($this->baseUrl . "user/{$id}");
+        $url = $this->baseUrl . "user/{$id}";
+        return $this->authService->apiRequestWithAutoRefresh('DELETE', $url);
     }
 }

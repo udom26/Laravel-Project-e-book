@@ -17,10 +17,14 @@ class BookController extends Controller
         $this->apiServiceCategory = $apiServiceCategory;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $books = $this->apiServiceBook->getAllBooks()->json();
+        // รับค่าหมวดหมู่ที่เลือกจากหน้าเว็บ (category_id)
+        $selectedCategoryId = $request->input('category_id');
+        $itemlimit = $request->input('itemlimit');
+        $page = $request->input('page');
 
+        // ดึง list หมวดหมู่ทั้งหมดสำหรับ select
         $categoriesResponse = $this->apiServiceCategory->getAllCategories();
         $categoriesJson = $categoriesResponse->json();
 
@@ -32,7 +36,29 @@ class BookController extends Controller
             $categories = [];
         }
 
-        return view('admin.book', compact('books', 'categories'));
+        // หา cate_name จาก id ที่เลือก
+        $selectedCategoryName = null;
+        if ($selectedCategoryId && !empty($categories)) {
+            $cate = collect($categories)->firstWhere('_id', $selectedCategoryId);
+            $selectedCategoryName = $cate['cate_name'] ?? null;
+        }
+
+        $params = [
+            // ส่ง cate_name ไปเป็น categories ให้ API
+            'categories' => $selectedCategoryName,
+            'itemlimit' => $itemlimit,
+            'page' => $page,
+        ];
+
+        $booksResponse = $this->apiServiceBook->advancedSearchBooks($params);
+        $books = $booksResponse->successful() ? $booksResponse->json() : [];
+        $bookList = isset($books['data']) ? $books['data'] : [];
+
+        return view('admin.book', [
+            'books' => $bookList,
+            'categories' => $categories,
+            'meta' => $books['meta'] ?? null
+        ]);
     }
 
     public function create()
@@ -160,5 +186,45 @@ class BookController extends Controller
             $errorMsg = $response->json('message') ?? 'อัปเดตหนังสือไม่สำเร็จ';
             return redirect()->back()->with('error', $errorMsg);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $q = $request->input('q');
+        $categoryId = $request->input('category_id');
+
+        $params = [];
+        if ($q) {
+            $params['book_name'] = $q;
+        }
+        if ($categoryId) {
+            $params['categories'] = $categoryId;
+        }
+
+        $booksResponse = $this->apiServiceBook->advancedSearchBooks($params);
+        $books = $booksResponse->successful() ? ($booksResponse->json()['data'] ?? []) : [];
+
+        $categoriesResponse = $this->apiServiceCategory->getAllCategories();
+        $categories = $categoriesResponse->successful()
+            ? ($categoriesResponse->json()['data'] ?? [])
+            : [];
+
+        return view('ebook.search', compact('books', 'categories'));
+    }
+
+    public function detail($id)
+    {
+        $book = app(\App\Services\ApiServiceBook::class)->getBookById($id)->json();
+        return view('ebook.detail', compact('book'));
+    }
+
+    public function suggestions()
+    {
+        $booksResponse = $this->apiServiceBook->getBookSuggestions();
+        $books = $booksResponse->successful() ? $booksResponse->json() : [];
+
+        return view('ebook.suggestions', [
+            'books' => $books
+        ]);
     }
 }

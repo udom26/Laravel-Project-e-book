@@ -1,15 +1,13 @@
 <?php
 namespace App\Services;
 
-use App\Services\ApiServiceRefreshtoken;
-
 class ApiServiceBook
 {
-    protected $refreshService;
+    protected $authService;
 
-    public function __construct(ApiServiceRefreshtoken $refreshService)
+    public function __construct(\App\Services\ApiServiceAuth $authService)
     {
-        $this->refreshService = $refreshService;
+        $this->authService = $authService;
     }
 
     public function createBook($book_name, $book_author, $book_description, $book_cover_image_url, $book_reader_url, $categories)
@@ -23,19 +21,19 @@ class ApiServiceBook
             'book_reader_url' => $book_reader_url,
             'categories' => $categories,
         ];
-        return $this->refreshService->callApiWithAutoRefresh('post', $url, $data);
+        return $this->authService->apiRequestWithAutoRefresh('POST', $url, ['json' => $data]);
     }
 
     public function getAllBooks()
     {
         $url = env('NGROK_API_URL') . 'books';
-        return $this->refreshService->callApiWithAutoRefresh('get', $url);
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 
     public function getBookById($id)
     {
         $url = env('NGROK_API_URL') . "books/{$id}";
-        return $this->refreshService->callApiWithAutoRefresh('get', $url);
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 
     public function updateBook($id, $book_name, $book_author, $book_description, $book_cover_image_url, $book_reader_url, $categories)
@@ -49,27 +47,41 @@ class ApiServiceBook
             'book_reader_url' => $book_reader_url,
             'categories' => $categories,
         ];
-        return $this->refreshService->callApiWithAutoRefresh('patch', $url, $data);
+        return $this->authService->apiRequestWithAutoRefresh('PATCH', $url, ['json' => $data]);
     }
 
     public function deleteBook($id)
     {
         $url = env('NGROK_API_URL') . "books/{$id}";
-        return $this->refreshService->callApiWithAutoRefresh('delete', $url);
+        return $this->authService->apiRequestWithAutoRefresh('DELETE', $url);
     }
 
-    public function refreshToken()
+    public function getMyBooks()
     {
-        $url = env('NGROK_API_URL') . 'auth/refresh';
-        $refreshToken = session('refresh_token');
-        $response = \Illuminate\Support\Facades\Http::post($url, [
-            'refresh_token' => $refreshToken,
-        ]);
-        if ($response->successful()) {
-            // สมมติว่า response มี access_token ใหม่
-            session(['access_token' => $response['access_token']]);
-            return true;
+        $url = env('NGROK_API_URL') . 'books/my-borrowed';
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
+    }
+
+    public function getBookSuggestions()
+    {
+        $url = env('NGROK_API_URL') . 'books/suggestions';
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
+    }
+
+    public function getBooksByName($book_name)
+    {
+        $url = env('NGROK_API_URL') . 'books?book_name=' . urlencode($book_name);
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
+    }
+
+    public function advancedSearchBooks($params = [])
+    {
+        $url = env('NGROK_API_URL') . 'books/search/advanced';
+
+        if (!empty($params)) {
+            $url .= '?' . http_build_query($params);
         }
-        return false;
+
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 }

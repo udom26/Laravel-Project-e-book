@@ -150,7 +150,7 @@
     @yield('head')
 </head>
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url('/') }}">E-Book</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -158,9 +158,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <form class="d-flex ms-auto me-3" role="search" action="{{ url('/') }}" method="get">
-                    <input class="form-control me-2 search-bar" type="search" name="q" placeholder="ค้นหาหนังสือ..." aria-label="Search">
-                </form>
+                @if(!request()->routeIs('book.search'))
+                    <form class="d-flex ms-auto me-3" role="search" action="{{ route('book.search') }}" method="get">
+                        <input class="form-control me-2 search-bar" type="search" name="q" placeholder="ค้นหาหนังสือ..." aria-label="Search" value="{{ request('q') }}">
+                    </form>
+                @endif
                 <ul class="navbar-nav mb-2 mb-lg-0 align-items-center ms-auto">
                     @if(session('user_email'))
                         <!-- แสดงเมื่อล็อกอินแล้ว -->
@@ -178,7 +180,7 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="profile"><i class="fas fa-user me-2"></i>โปรไฟล์</a></li>
-                                <li><a class="dropdown-item" href="mybook"><i class="fas fa-book me-2"></i>หนังสือของฉัน</a></li>
+                                <li><a class="dropdown-item" href="{{ route('mybook') }}"><i class="fas fa-book me-2"></i>หนังสือของฉัน</a></li>
                                 <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>กลับหน้าหลัก</a></li>
                                 @if(in_array('admin', session('user_roles', [])))
                                     <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="fas fa-cogs me-2"></i>ไปหน้าแอดมิน</a></li>
@@ -251,26 +253,7 @@
             </div>
         </div>
         
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div>
-                        <span>© 2025 E-Book System. All rights reserved.</span>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-primary btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="btn btn-info btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="btn btn-danger btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

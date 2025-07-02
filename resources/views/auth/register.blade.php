@@ -56,31 +56,55 @@ h4, .mb-3.text-center {
             
             {{-- แสดง error หรือ success message --}}
             @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
+                <div class="alert alert-danger text-center">{{ session('error') }}</div>
             @endif
             @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success text-center">{{ session('success') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger text-center">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
             @endif
 
             <form method="POST" action="{{ route('auth.register') }}">
                 @csrf
                 <div class="mb-3">
                     <input type="text" name="name" class="form-control" placeholder="ชื่อ" required autofocus value="{{ old('name') }}">
+                    @error('name')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <input type="text" name="surname" class="form-control" placeholder="นามสกุล" required value="{{ old('surname') }}">
+                    @error('surname')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <input type="email" name="email" class="form-control" placeholder="อีเมล" required value="{{ old('email') }}">
+                    @error('email')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <input type="password" name="password" class="form-control" placeholder="รหัสผ่าน" required>
+                    @error('password')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <input type="password" name="password_confirmation" class="form-control" placeholder="ยืนยันรหัสผ่าน" required>
+                    @error('password_confirmation')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <button type="submit" class="btn btn-gradient w-100">สมัครสมาชิก</button>
             </form>
         </div>
     </div>
 @endsection
+

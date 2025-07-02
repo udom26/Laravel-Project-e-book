@@ -27,7 +27,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $category['cate_name'] }}</td>
-                        <td>{{ $category['cate_cover_url'] }}</td>
+                        <td>{{ $category['cate_cover_url'] ?? '' }}</td>
                        
                         <td class="text-end">
                             <!-- ปุ่มแก้ไข -->
@@ -113,4 +113,5 @@
     </form>
   </div>
 </div>
+
 @endsection

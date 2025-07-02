@@ -58,6 +58,30 @@ h4, .mb-3.text-center {
             <div class="mb-3 text-center">
                 กรอกอีเมลของคุณเพื่อรับลิงก์รีเซ็ตรหัสผ่าน
             </div>
+
+            {{-- แจ้งเตือนสำเร็จ --}}
+            @if(session('status'))
+                <div class="alert alert-success text-center" role="alert">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            {{-- แจ้งเตือน error --}}
+            @if(session('error'))
+                <div class="alert alert-danger text-center" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- แจ้งเตือน validation --}}
+            @if($errors->any())
+                <div class="alert alert-danger text-center" role="alert">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
             <form method="POST" action="#">
                 @csrf
                 <div class="mb-3">

@@ -31,15 +31,24 @@
         </div>
         <div class="mb-3">
             <label class="form-label">หมวดหมู่</label>
-            <select name="categories[]" class="form-select" required>
-                @foreach($categories as $category)
-                    <option value="{{ $category['_id'] }}"
-                        @if(isset($book['categories']) && collect($book['categories'])->pluck('_id')->contains($category['_id']))
-                            selected
-                        @endif
-                    >{{ $category['cate_name'] }}</option>
-                @endforeach
-            </select>
+            @php
+                $bookCategoryIds = collect($book['categories'] ?? [])->pluck('_id')->toArray();
+            @endphp
+            @foreach($categories as $category)
+                <div class="form-check">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="categories[]"
+                        id="cate_{{ $category['_id'] }}"
+                        value="{{ $category['_id'] }}"
+                        {{ in_array($category['_id'], $bookCategoryIds) ? 'checked' : '' }}
+                    >
+                    <label class="form-check-label" for="cate_{{ $category['_id'] }}">
+                        {{ $category['cate_name'] }}
+                    </label>
+                </div>
+            @endforeach
         </div>
         <button type="submit" class="btn btn-success">บันทึก</button>
         <a href="{{ route('book') }}" class="btn btn-secondary">ยกเลิก</a>

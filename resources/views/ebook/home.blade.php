@@ -10,26 +10,16 @@
     border-radius: 1rem;
     overflow: hidden;
     height: 100%;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .book-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-.book-cover {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
 }
 .book-info {
     padding: 1rem;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 1rem;
 }
 .book-title {
     font-weight: bold;
@@ -62,16 +52,18 @@
     margin-bottom: 2rem;
     position: relative;
 }
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
+.btn-primary {
     background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    border-radius: 2px;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(102,126,234,0.15);
 }
 </style>
 @endsection
@@ -89,56 +81,31 @@
 
     <!-- หนังสือแนะนำ -->
     <div class="container py-5">
-        <h2 class="text-center section-title">หนังสือแนะนำ</h2>
-        <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="book-card">
-                    <div class="book-cover">
-                        <i class="fas fa-book fa-3x"></i>
-                    </div>
-                    <div class="book-info">
-                        <h5 class="book-title">เรื่องเล่าจากภูเขา</h5>
-                        <p class="book-author">โดย สมชาย ใจดี</p>
-                        <p class="text-muted small">นิยายผจญภัยที่พาคุณไปสู่การเดินทางสุดตื่นเต้น</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="book-card">
-                    <div class="book-cover">
-                        <i class="fas fa-heart fa-3x"></i>
-                    </div>
-                    <div class="book-info">
-                        <h5 class="book-title">รักในวันฝน</h5>
-                        <p class="book-author">โดย สุนิสา รักเรียน</p>
-                        <p class="text-muted small">เรื่องราวความรักที่อบอุ่นและน่าติดตาม</p>
+        <h2 class="text-center section-title">หนังสือยอดนิยม</h2>
+        <div class="row justify-content-center">
+            @forelse($suggestions['data'] ?? [] as $book)
+                <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                    <div class="book-card w-100">
+                        <div class="book-cover d-flex align-items-center justify-content-center" style="height: 200px;">
+                            @if(!empty($book['book_cover_image_url']))
+                                <img src="{{ $book['book_cover_image_url'] }}" alt="{{ $book['book_name'] }}" style="max-height: 100%; max-width: 100%;">
+                            @else
+                                <i class="fas fa-book fa-3x"></i>
+                            @endif
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title">{{ $book['book_name'] ?? '-' }}</h5>
+                            <p class="book-author">โดย {{ $book['book_author'] ?? '-' }}</p>
+                            <p class="text-muted small">{{ $book['book_description'] ?? '' }}</p>
+                            <div class="d-grid gap-2 mt-3">
+                                    <a href="{{ route('book.detail', $book['_id']) }}" class="btn btn-primary">ดูรายละเอียด/ยืมหนังสือ</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="book-card">
-                    <div class="book-cover">
-                        <i class="fas fa-rocket fa-3x"></i>
-                    </div>
-                    <div class="book-info">
-                        <h5 class="book-title">การเดินทางสู่ดวงดาว</h5>
-                        <p class="book-author">โดย วิทยา นักคิด</p>
-                        <p class="text-muted small">นิยายวิทยาศาสตร์ที่จะพาคุณสู่อนาคต</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="book-card">
-                    <div class="book-cover">
-                        <i class="fas fa-magic fa-3x"></i>
-                    </div>
-                    <div class="book-info">
-                        <h5 class="book-title">เวทมนตร์แห่งป่าใหญ่</h5>
-                        <p class="book-author">โดย มายา เวทย์มนตร์</p>
-                        <p class="text-muted small">แฟนตาซีสุดมันส์ในโลกแห่งเวทมนตร์</p>
-                    </div>
-                </div>
-            </div>
+            @empty
+                <div class="col-12 text-center text-muted">ไม่มีหนังสือแนะนำในขณะนี้</div>
+            @endforelse
         </div>
     </div>
 
@@ -151,7 +118,7 @@
                     <i class="fas fa-book-open fa-4x mb-3"></i>
                     <h3>นิยาย</h3>
                     <p>รวมนิยายหลากหลายแนว ทั้งรัก ผจญภัย แฟนตาซี และอื่นๆ อีกมากมาย</p>
-                    <a href="#" class="btn btn-light btn-lg mt-3">เริ่มอ่าน</a>
+                    <a href="/search" class="btn btn-light btn-lg mt-3">เริ่มอ่าน</a>
                 </div>
             </div>
             <div class="col-md-5 mb-4">
@@ -159,7 +126,7 @@
                     <i class="fas fa-graduation-cap fa-4x mb-3"></i>
                     <h3>การศึกษา</h3>
                     <p>หนังสือความรู้ บทเรียน และเอกสารการศึกษาสำหรับทุกระดับ</p>
-                    <a href="#" class="btn btn-light btn-lg mt-3">เรียนรู้</a>
+                    <a href="/search" class="btn btn-light btn-lg mt-3">เรียนรู้</a>
                 </div>
             </div>
         </div>

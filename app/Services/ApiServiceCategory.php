@@ -1,15 +1,13 @@
 <?php
 namespace App\Services;
 
-use App\Services\ApiServiceRefreshtoken;
-
 class ApiServiceCategory
 {
-    protected $refreshService;
+    protected $authService;
 
-    public function __construct(ApiServiceRefreshtoken $refreshService)
+    public function __construct(\App\Services\ApiServiceAuth $authService)
     {
-        $this->refreshService = $refreshService;
+        $this->authService = $authService;
     }
 
     public function createCategory($cate_name, $cate_cover_url)
@@ -19,13 +17,13 @@ class ApiServiceCategory
             'cate_name' => $cate_name,
             'cate_cover_url' => $cate_cover_url,
         ];
-        return $this->refreshService->callApiWithAutoRefresh('post', $url, $data);
+        return $this->authService->apiRequestWithAutoRefresh('POST', $url, ['json' => $data]);
     }
 
     public function getAllCategories()
     {
         $url = env('NGROK_API_URL') . 'categories';
-        return $this->refreshService->callApiWithAutoRefresh('get', $url);
+        return $this->authService->apiRequestWithAutoRefresh('GET', $url);
     }
 
     public function updateCategory($id, $cate_name, $cate_cover_url)
@@ -35,12 +33,12 @@ class ApiServiceCategory
             'cate_name' => $cate_name,
             'cate_cover_url' => $cate_cover_url,
         ];
-        return $this->refreshService->callApiWithAutoRefresh('patch', $url, $data);
+        return $this->authService->apiRequestWithAutoRefresh('PATCH', $url, ['json' => $data]);
     }
 
     public function deleteCategory($id)
     {
         $url = env('NGROK_API_URL') . "categories/{$id}";
-        return $this->refreshService->callApiWithAutoRefresh('delete', $url);
+        return $this->authService->apiRequestWithAutoRefresh('DELETE', $url);
     }
 }
