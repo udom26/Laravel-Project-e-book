@@ -54,4 +54,31 @@ class UserController extends Controller
         }
         return back()->with('error', 'เกิดข้อผิดพลาด');
     }
+
+    // BORROWED: แสดงประวัติการยืมของผู้ใช้
+    public function borrowed($id)
+    {
+        $response = app(\App\Services\ApiServiceTransaction::class)->getAllTransactions();
+        $transactions = $response->successful() ? $response->json() : [];
+
+        $userId = $id;
+        $borrowedBooks = array_filter($transactions, function($trx) use ($userId) {
+            // กรณี userId เป็น array และมี $oid
+            if (is_array($trx['userId']) && isset($trx['userId']['$oid'])) {
+                return trim($trx['userId']['$oid']) == trim($userId);
+            }
+            // กรณี userId เป็น string
+            if (is_string($trx['userId'])) {
+                return trim($trx['userId']) == trim($userId);
+            }
+            return false;
+        });
+        $borrowedBooks = array_values($borrowedBooks); // << สำคัญ!
+
+       dd($userId, $transactions, $borrowedBooks);
+
+        $user = $this->apiServiceUser->getUser($userId)->json();
+
+        return view('admin.user_borrowed', compact('user', 'borrowedBooks'));
+    }
 }

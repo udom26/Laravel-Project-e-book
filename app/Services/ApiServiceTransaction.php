@@ -35,4 +35,10 @@ class ApiServiceTransaction
     {
         return $this->baseUrl . "books/{$id}/borrow";
     }
+
+    public function getUserBorrowedBooks($userId)
+    {
+        $url = env('NGROK_API_URL') . "transaction/user/$userId/borrowed";
+        return \Illuminate\Support\Facades\Http::get($url);
+    }
 }

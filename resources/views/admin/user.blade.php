@@ -32,6 +32,7 @@
                                 </td>
                                 <td class="text-end">
                                     <a href="{{ route('user.edit', $user['id'] ?? $user['_id']) }}" class="btn btn-sm btn-warning">แก้ไข</a>
+                                    <a href="{{ route('user.borrowed', $user['id'] ?? $user['_id']) }}" class="btn btn-sm btn-info">ดูการยืม</a>
                                     <form action="{{ route('user.destroy', $user['id'] ?? $user['_id']) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
