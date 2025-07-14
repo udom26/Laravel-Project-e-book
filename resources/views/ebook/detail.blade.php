@@ -26,7 +26,11 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                <a href="{{ route('mybook') }}" class="btn btn-primary mt-3 w-100">ไปยัง My Book</a>
+                <a href="{{ route('mybook') }}" 
+                   class="btn mt-3 w-100"
+                   style="background: linear-gradient(90deg, #a18cd1 0%, #fbc2eb 100%); color: #fff; border: none; font-weight: bold;">
+                    ไปยัง My Book
+                </a>
             </div>
         </div>
     </div>

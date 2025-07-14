@@ -13,7 +13,7 @@ class MybookController extends Controller
         $borrowedBooks = $response->successful() ? collect($response->json('borrowedBooks')) : collect();
 
         // แปลงเป็น LengthAwarePaginator
-        $perPage = 2;
+        $perPage = 3;
         $page = $request->input('page', 1);
         $pagedData = $borrowedBooks->slice(($page - 1) * $perPage, $perPage)->values();
         $paginated = new \Illuminate\Pagination\LengthAwarePaginator(

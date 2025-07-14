@@ -6,7 +6,7 @@ test.describe('ล็อคอิน', () => {
   });
 
   test('ล็อกอินสำเร็จด้วยข้อมูลที่ถูกต้อง', async ({ page }) => {
-    await page.fill('input[placeholder="Email"]', 'admin3@gmail.com');
+    await page.fill('input[placeholder="Email"]', 'admin1@gmail.com');
     await page.fill('input[placeholder="Password"]', '123456789zz');
     await page.click('button:has-text("ล็อกอินเข้าสู่ระบบ")');
     // ตรวจสอบว่า redirect ออกจากหน้า login
@@ -19,7 +19,7 @@ test.describe('ล็อคอิน', () => {
     await page.click('button:has-text("ล็อกอินเข้าสู่ระบบ")');
     // ตรวจสอบว่าหน้าไม่ redirect
     await expect(page).toHaveURL(/login/);
-    // ตรวจสอบข้อความ error ที่แสดง (แก้ไขข้อความให้ตรงกับระบบจริง)
+    // ตรวจสอบข้อความ error ที่แสดง 
     await expect(page.locator('text=อีเมลหรือรหัสผ่านไม่ถูกต้อง')).toBeVisible();
   });
 
@@ -29,6 +29,8 @@ test.describe('ล็อคอิน', () => {
     await page.click('button:has-text("ล็อกอินเข้าสู่ระบบ")');
     // ตรวจสอบว่ายังอยู่ที่หน้า login
     await expect(page).toHaveURL(/login/);
-  
+    // ตรวจสอบข้อความ error ที่แสดง 
+    await expect(page.locator('text=กรุณากรอกอีเมล')).toBeVisible();
+    await expect(page.locator('text=กรุณากรอกรหัสผ่าน')).toBeVisible();
   });
 });

@@ -20,7 +20,7 @@
 <body>
   <div class="header-container">
     <h1>Test Results Summary</h1>
-    <p>Total Tests: 1 | Passed: 1 | Failed: 0 | Skipped: 0</p>
+    <p>Total Tests: 8 | Passed: 3 | Failed: 5 | Skipped: 0</p>
     <div class="chart-container">
       <canvas id="donutChart" width="200" height="200"></canvas>
     </div>
@@ -38,14 +38,77 @@
         </tr>
       </thead>
       <tbody>
-        <tr><th colspan="6" style="background:#e0e0ff;text-align:left;">ล็อคอิน</th></tr>
+        <tr><th colspan="6" style="background:#e0e0ff;text-align:left;">ลืมรหัสผ่าน</th></tr>
+<tr>
+  <td>1</td>
+  <td>ลิงก์ลืมรหัสผ่านต้องคลิกได้</td>
+  <td>Before Hooks → Click locator('text=ลืมรหัสผ่าน?') → toHaveURL → toBeVisible → After Hooks</td>
+  <td>Passed</td>
+  <td>1.38s</td>
+  <td style="color:#d32f2f;"></td>
+</tr>
+
+<tr>
+  <td>2</td>
+  <td>รีเซ็ตรหัสผ่าน</td>
+  <td>Before Hooks → Click locator('text=ลืมรหัสผ่าน?') → toHaveURL → Fill "testuser@gmail.com" locator('input[placeholder="อีเมล"]') → Click locator('button:has-text("ส่งลิงก์รีเซ็ตรหัสผ่าน")') → toBeVisible → After Hooks → Worker Cleanup</td>
+  <td>Failed</td>
+  <td>9.27s</td>
+  <td style="color:#d32f2f;">Error: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m<br><br>Locator: locator('input[placeholder="อีเมล"]')<br>Expected: visible<br>Received: <element(s) not found><br>Call log:<br>[2m  - Expect "toBeVisible" with timeout 5000ms[22m<br>[2m  - waiting for locator('input[placeholder="อีเมล"]')[22m<br></td>
+</tr>
+<tr><th colspan="6" style="background:#e0e0ff;text-align:left;">ล็อคอิน</th></tr>
 <tr>
   <td>1</td>
   <td>ล็อกอินสำเร็จด้วยข้อมูลที่ถูกต้อง</td>
-  <td>Before Hooks → Fill "admin3@gmail.com" locator('input[placeholder="Email"]') → Fill "123456789zz" locator('input[placeholder="Password"]') → Click locator('button:has-text("ล็อกอินเข้าสู่ระบบ")') → not toHaveURL → After Hooks</td>
+  <td>Before Hooks → Fill "admin1@gmail.com" locator('input[placeholder="Email"]') → Fill "123456789zz" locator('input[placeholder="Password"]') → Click locator('button:has-text("ล็อกอินเข้าสู่ระบบ")') → not toHaveURL → After Hooks</td>
   <td>Passed</td>
-  <td>1.91s</td>
+  <td>4.09s</td>
   <td style="color:#d32f2f;"></td>
+</tr>
+
+<tr>
+  <td>2</td>
+  <td>ล็อกอินไม่สำเร็จเมื่อกรอกข้อมูลไม่ครบ</td>
+  <td>Before Hooks → Fill "" locator('input[placeholder="Email"]') → Fill "" locator('input[placeholder="Password"]') → Click locator('button:has-text("ล็อกอินเข้าสู่ระบบ")') → toHaveURL → toBeVisible → After Hooks → Worker Cleanup</td>
+  <td>Failed</td>
+  <td>5.82s</td>
+  <td style="color:#d32f2f;">Error: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m<br><br>Locator: locator('text=กรุณากรอกอีเมล')<br>Expected: visible<br>Received: <element(s) not found><br>Call log:<br>[2m  - Expect "toBeVisible" with timeout 5000ms[22m<br>[2m  - waiting for locator('text=กรุณากรอกอีเมล')[22m<br></td>
+</tr>
+
+<tr>
+  <td>3</td>
+  <td>ล็อกอินไม่สำเร็จเมื่อกรอกข้อมูลผิด</td>
+  <td>Before Hooks → Fill "wrong@email.com" locator('input[placeholder="Email"]') → Fill "wrongpassword" locator('input[placeholder="Password"]') → Click locator('button:has-text("ล็อกอินเข้าสู่ระบบ")') → toHaveURL → toBeVisible → After Hooks → Worker Cleanup</td>
+  <td>Failed</td>
+  <td>8.96s</td>
+  <td style="color:#d32f2f;">Error: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m<br><br>Locator: locator('text=อีเมลหรือรหัสผ่านไม่ถูกต้อง')<br>Expected: visible<br>Received: <element(s) not found><br>Call log:<br>[2m  - Expect "toBeVisible" with timeout 5000ms[22m<br>[2m  - waiting for locator('text=อีเมลหรือรหัสผ่านไม่ถูกต้อง')[22m<br></td>
+</tr>
+<tr><th colspan="6" style="background:#e0e0ff;text-align:left;">สมัครสมาชิก</th></tr>
+<tr>
+  <td>1</td>
+  <td>สมัครสมาชิกสำเร็จ</td>
+  <td>Before Hooks → Navigate to "/login" → Click locator('text=สมัครสมาชิก') → toHaveURL → Fill "testuser" locator('input[placeholder="ชื่อ"]') → Fill "testsurname" locator('input[placeholder="นามสกุล"]') → Fill "testuser1752477327624@mail.com" locator('input[placeholder="อีเมล"]') → Fill "password123" locator('input[placeholder="รหัสผ่าน"]') → Fill "password123" locator('input[placeholder="ยืนยันรหัสผ่าน"]') → Click locator('button:has-text("สมัครสมาชิก")') → After Hooks</td>
+  <td>Passed</td>
+  <td>5.76s</td>
+  <td style="color:#d32f2f;"></td>
+</tr>
+
+<tr>
+  <td>2</td>
+  <td>สมัครสมาชิกไม่สำเร็จเมื่อข้อมูลไม่ครบ</td>
+  <td>Before Hooks → Navigate to "/login" → Click locator('text=สมัครสมาชิก') → toHaveURL → Click locator('button:has-text("สมัครสมาชิก")') → toBeVisible → After Hooks → Worker Cleanup</td>
+  <td>Failed</td>
+  <td>8.50s</td>
+  <td style="color:#d32f2f;">Error: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m<br><br>Locator: locator('text=กรุณากรอกชื่อ')<br>Expected: visible<br>Received: <element(s) not found><br>Call log:<br>[2m  - Expect "toBeVisible" with timeout 5000ms[22m<br>[2m  - waiting for locator('text=กรุณากรอกชื่อ')[22m<br></td>
+</tr>
+
+<tr>
+  <td>3</td>
+  <td>สมัครสมาชิกไม่สำเร็จเมื่ออีเมลซ้ำ</td>
+  <td>Before Hooks → Navigate to "/login" → Click locator('text=สมัครสมาชิก') → toHaveURL → Fill "testuser" locator('input[placeholder="ชื่อ"]') → Fill "testsurname" locator('input[placeholder="นามสกุล"]') → Fill "admin3@gmail.com" locator('input[placeholder="อีเมล"]') → Fill "password123" locator('input[placeholder="รหัสผ่าน"]') → Fill "password123" locator('input[placeholder="ยืนยันรหัสผ่าน"]') → Click locator('button:has-text("สมัครสมาชิก")') → toBeVisible → After Hooks → Worker Cleanup</td>
+  <td>Failed</td>
+  <td>10.82s</td>
+  <td style="color:#d32f2f;">Error: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m<br><br>Locator: locator('text=อีเมลนี้ถูกใช้ไปแล้ว')<br>Expected: visible<br>Received: <element(s) not found><br>Call log:<br>[2m  - Expect "toBeVisible" with timeout 5000ms[22m<br>[2m  - waiting for locator('text=อีเมลนี้ถูกใช้ไปแล้ว')[22m<br></td>
 </tr>
 
       </tbody>
@@ -57,7 +120,7 @@
       data: {
         labels: ['Passed', 'Failed', 'Skipped'],
         datasets: [{
-          data: [1, 0, 0],
+          data: [3, 5, 0],
           backgroundColor: ['#4CAF50', '#F44336', '#FFC107'],
           hoverOffset: 4
         }]
